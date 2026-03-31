@@ -143,6 +143,13 @@ func init() {
 		Types:    []string{Common.PluginTypeService},
 	})
 
+	Common.RegisterPlugin("nfs", Common.ScanPlugin{
+		Name:     "NFS",
+		Ports:    []int{111, 2049},
+		ScanFunc: Plugins.NFSScan,
+		Types:    []string{Common.PluginTypeService},
+	})
+
 	Common.RegisterPlugin("modbus", Common.ScanPlugin{
 		Name:     "Modbus",
 		Ports:    []int{502, 5020},

@@ -1,0 +1,15 @@
+name: poc-yaml-express-x-powered-by-exposure
+rules:
+  - method: GET
+    path: /
+    follow_redirects: true
+    expression: >
+      response.status >= 200 &&
+      response.status < 500 &&
+      "X-Powered-By" in response.headers &&
+      response.headers["X-Powered-By"].icontains("Express")
+detail:
+  author: codex
+  description: Detects Express applications exposing the X-Powered-By header. This is a technology exposure indicator; Express recommends disabling this header in production.
+  links:
+    - https://expressjs.com/en/advanced/best-practice-security.html

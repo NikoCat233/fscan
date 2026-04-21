@@ -1,0 +1,58 @@
+name: poc-yaml-nodejs-lockfile-disclosure
+groups:
+  package-lock:
+    - method: GET
+      path: /package-lock.json
+      follow_redirects: false
+      expression: >
+        response.status == 200 &&
+        (
+          response.content_type.icontains("json") ||
+          response.body.bcontains(b"\"lockfileVersion\"")
+        ) &&
+        response.body.bcontains(b"\"packages\"") &&
+        response.body.bcontains(b"node_modules")
+  npm-shrinkwrap:
+    - method: GET
+      path: /npm-shrinkwrap.json
+      follow_redirects: false
+      expression: >
+        response.status == 200 &&
+        (
+          response.content_type.icontains("json") ||
+          response.body.bcontains(b"\"lockfileVersion\"")
+        ) &&
+        response.body.bcontains(b"\"dependencies\"") &&
+        response.body.bcontains(b"node_modules")
+  pnpm-lock:
+    - method: GET
+      path: /pnpm-lock.yaml
+      follow_redirects: false
+      expression: >
+        response.status == 200 &&
+        response.body.bcontains(b"lockfileVersion:") &&
+        (
+          response.body.bcontains(b"dependencies:") ||
+          response.body.bcontains(b"packages:")
+        )
+  yarn-lock:
+    - method: GET
+      path: /yarn.lock
+      follow_redirects: false
+      expression: >
+        response.status == 200 &&
+        (
+          response.body.bcontains(b"yarn lockfile") ||
+          response.body.bcontains(b"__metadata:")
+        ) &&
+        (
+          response.body.bcontains(b"version") ||
+          response.body.bcontains(b"resolution")
+        )
+detail:
+  author: codex
+  description: Detects exposed Node.js dependency lock files. Lock file disclosure can reveal dependency versions for Node.js, React, Next.js, undici, and other packages relevant to CVE triage.
+  links:
+    - https://docs.npmjs.com/cli/v10/configuring-npm/package-lock-json
+    - https://pnpm.io/next/git
+    - https://yarnpkg.com/getting-started/qa

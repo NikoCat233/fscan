@@ -1,0 +1,30 @@
+name: poc-yaml-react-webpack-sourcemap-disclosure
+rules:
+  - method: GET
+    path: /
+    follow_redirects: true
+    search: '<script[^>]+src=["''](?P<bundle>/[^"''?]*(?:static/)?js/[^"''?]+\.js)(?:\?[^"'']*)?["'']'
+    expression: >
+      response.status == 200 &&
+      (
+        response.body.bcontains(b"/static/js/") ||
+        response.body.bcontains(b"__webpack") ||
+        response.body.bcontains(b"webpackJsonp")
+      )
+  - method: GET
+    path: "{{bundle}}.map"
+    follow_redirects: false
+    expression: >
+      response.status == 200 &&
+      (
+        response.content_type.icontains("json") ||
+        response.content_type.icontains("source-map") ||
+        response.body.bcontains(b"\"version\"")
+      ) &&
+      response.body.bcontains(b"\"sources\"") &&
+      response.body.bcontains(b"\"mappings\"")
+detail:
+  author: codex
+  description: Detects exposed JavaScript source maps commonly produced by React/webpack build pipelines. Source maps can leak source code and secrets embedded in client bundles.
+  links:
+    - https://create-react-app.dev/docs/production-build/

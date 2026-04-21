@@ -1,0 +1,30 @@
+name: poc-yaml-nodejs-inspector-unauthorized-exposure
+groups:
+  inspector-version:
+    - method: GET
+      path: /json/version
+      follow_redirects: false
+      expression: >
+        response.status == 200 &&
+        response.content_type.icontains("json") &&
+        response.body.bcontains(b"\"Browser\"") &&
+        response.body.bcontains(b"node.js/v") &&
+        response.body.bcontains(b"\"Protocol-Version\"")
+  inspector-target-list:
+    - method: GET
+      path: /json/list
+      follow_redirects: false
+      expression: >
+        response.status == 200 &&
+        response.content_type.icontains("json") &&
+        response.body.bcontains(b"webSocketDebuggerUrl") &&
+        (
+          response.body.bcontains(b"\"type\":\"node\"") ||
+          response.body.bcontains(b"devtoolsFrontendUrl")
+        )
+detail:
+  author: codex
+  description: Detects exposed Node.js inspector HTTP endpoints without connecting to the debugger WebSocket or evaluating code. Public inspector exposure is high risk and can reveal exact runtime versions for Node.js CVE triage.
+  links:
+    - https://nodejs.org/en/docs/inspector/
+    - https://nodejs.org/en/blog/vulnerability/march-2026-security-releases

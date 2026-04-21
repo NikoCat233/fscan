@@ -1,0 +1,19 @@
+name: poc-yaml-nodejs-package-json-disclosure
+rules:
+  - method: GET
+    path: /package.json
+    follow_redirects: false
+    expression: >
+      response.status == 200 &&
+      response.content_type.icontains("json") &&
+      response.body.bcontains(b"\"name\"") &&
+      (
+        response.body.bcontains(b"\"dependencies\"") ||
+        response.body.bcontains(b"\"devDependencies\"") ||
+        response.body.bcontains(b"\"scripts\"")
+      )
+detail:
+  author: codex
+  description: Detects exposed Node.js package metadata. package.json disclosure can reveal dependency versions and help identify vulnerable Node/React components.
+  links:
+    - https://docs.npmjs.com/cli/v10/configuring-npm/package-json

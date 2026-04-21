@@ -1,0 +1,18 @@
+name: poc-yaml-prometheus-config-unauth
+groups:
+  status-config-json:
+    - method: GET
+      path: /api/v1/status/config
+      expression: |
+        response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"status\"") && response.body.bcontains(b"\"success\"") && response.body.bcontains(b"\"yaml\"") && response.body.bcontains(b"scrape_configs")
+  config-page:
+    - method: GET
+      path: /config
+      expression: |
+        response.status == 200 && response.body.bcontains(b"global:") && response.body.bcontains(b"scrape_configs:") && response.body.bcontains(b"scrape_interval")
+detail:
+  author: adysec/nuclei_poc
+  description: Prometheus configuration endpoint is accessible without authentication
+  links:
+    - https://github.com/adysec/nuclei_poc
+    - https://jfrog.com/blog/dont-let-prometheus-steal-your-fire/

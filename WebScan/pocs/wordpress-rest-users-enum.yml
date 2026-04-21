@@ -1,0 +1,17 @@
+name: poc-yaml-wordpress-rest-users-enum
+groups:
+  wp-json-users:
+    - method: GET
+      path: /wp-json/wp/v2/users
+      expression: |
+        response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"id\"") && response.body.bcontains(b"\"name\"") && response.body.bcontains(b"\"slug\"")
+  rest-route-users:
+    - method: GET
+      path: /?rest_route=/wp/v2/users
+      expression: |
+        response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"id\"") && response.body.bcontains(b"\"name\"") && response.body.bcontains(b"\"slug\"")
+detail:
+  author: adysec/nuclei_poc
+  description: WordPress REST API exposes user metadata
+  links:
+    - https://github.com/adysec/nuclei_poc

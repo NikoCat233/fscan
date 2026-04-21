@@ -1,0 +1,25 @@
+name: poc-yaml-wordpress-config-backup
+sets:
+  path:
+    - wp-config.php.bak
+    - wp-config.php.old
+    - wp-config.php.orig
+    - wp-config.php.save
+    - wp-config.php.txt
+    - wp-config.php~
+    - wp-config.php.swp
+    - wp-config.php.dist
+    - wp-config.php.inc
+    - wp-config.php-backup
+    - wp-config-backup.txt
+    - .wp-config.php.swp
+rules:
+  - method: GET
+    path: /{{path}}
+    expression: |
+      response.status == 200 && response.body.bcontains(b"DB_NAME") && response.body.bcontains(b"DB_USER") && response.body.bcontains(b"DB_PASSWORD") && (response.body.bcontains(b"<?php") || response.body.bcontains(b"AUTH_KEY"))
+detail:
+  author: adysec/nuclei_poc
+  description: WordPress wp-config backup or temporary file exposure
+  links:
+    - https://github.com/adysec/nuclei_poc

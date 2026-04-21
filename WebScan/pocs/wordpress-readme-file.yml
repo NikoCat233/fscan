@@ -1,0 +1,16 @@
+name: poc-yaml-wordpress-readme-file
+sets:
+  path:
+    - readme.html
+    - wp/readme.html
+    - blog/wp/readme.html
+rules:
+  - method: GET
+    path: /{{path}}
+    expression: |
+      response.status == 200 && response.body.bcontains(b"WordPress &#8250; ReadMe")
+detail:
+  author: adysec/nuclei_poc
+  description: WordPress readme.html exposure may disclose version information
+  links:
+    - https://github.com/adysec/nuclei_poc

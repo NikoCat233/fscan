@@ -1,0 +1,21 @@
+name: poc-yaml-wordpress-xmlrpc-detect
+groups:
+  xmlrpc-enabled-get:
+    - method: GET
+      path: /xmlrpc.php
+      expression: |
+        (response.status == 405 || response.status == 200) && response.body.bcontains(b"XML-RPC server accepts POST requests only.")
+  xmlrpc-listmethods:
+    - method: POST
+      path: /xmlrpc.php
+      headers:
+        Content-Type: text/xml
+      body: |
+        <?xml version="1.0" encoding="utf-8"?><methodCall><methodName>system.listMethods</methodName><params></params></methodCall>
+      expression: |
+        response.status == 200 && response.body.bcontains(b"system.multicall") && response.body.bcontains(b"system.listMethods")
+detail:
+  author: adysec/nuclei_poc
+  description: WordPress XML-RPC endpoint is enabled and exposes system methods
+  links:
+    - https://github.com/adysec/nuclei_poc
